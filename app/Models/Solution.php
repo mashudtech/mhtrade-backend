@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Solution extends Model
+{
+    protected $fillable = [
+        'slug', 'num', 'title', 'hero_headline', 'badge',
+        'short_desc', 'overview', 'image', 'process_text',
+        'highlight_banner', 'is_published', 'sort_order',
+    ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(SolutionItem::class)->orderBy('sort_order');
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->image)) {
+            return asset('images/hero/dubai_hero_bg.webp');
+        }
+
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
+        }
+
+        if (str_starts_with($this->image, 'images/')) {
+            return asset($this->image);
+        }
+
+        return asset('images/verticals/' . $this->image);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)->orderBy('sort_order');
+    }
+}
