@@ -8,7 +8,6 @@ use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 
 class InquiryController extends Controller
 {
@@ -16,14 +15,17 @@ class InquiryController extends Controller
     {
         $validated = $request->validate([
             'vertical' => 'required|in:lc,uae-banking,project,commodity,general',
-            'name'     => 'required|string|max:255',
-            'company'  => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'company' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
-            'email'    => 'required|email|max:255',
-            'phone'    => 'nullable|string|max:50',
-            'country'  => 'nullable|string|max:100',
-            'details'  => 'nullable|string|max:5000',
-            'doc'      => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:10240',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'country' => 'nullable|string|max:100',
+            'details' => 'required|string|max:5000',
+            'doc' => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:10240',
+        ], [
+            'company.required' => 'Company Name is required.',
+            'details.required' => 'Requirement specifications are required.',
         ]);
 
         // Generate unique Request ID
@@ -37,26 +39,26 @@ class InquiryController extends Controller
 
         // Create inquiry
         $inquiry = Inquiry::create([
-            'request_id'  => $requestId,
-            'vertical'    => $validated['vertical'],
-            'name'        => $validated['name'],
-            'company'     => $validated['company'] ?? null,
-            'position'    => $validated['position'] ?? null,
-            'email'       => $validated['email'],
-            'phone'       => $validated['phone'] ?? null,
-            'country'     => $validated['country'] ?? null,
-            'details'     => $validated['details'] ?? null,
-            'doc_path'    => $docPath,
-            'status'      => 'new',
+            'request_id' => $requestId,
+            'vertical' => $validated['vertical'],
+            'name' => $validated['name'],
+            'company' => $validated['company'] ?? null,
+            'position' => $validated['position'] ?? null,
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'country' => $validated['country'] ?? null,
+            'details' => $validated['details'] ?? null,
+            'doc_path' => $docPath,
+            'status' => 'new',
         ]);
 
         // Send email notification (if SMTP configured)
         $this->sendNotification($inquiry);
 
         return response()->json([
-            'success'    => true,
+            'success' => true,
             'request_id' => $requestId,
-            'message'    => 'Requirement submitted successfully.',
+            'message' => 'Requirement submitted successfully.',
         ]);
     }
 
@@ -70,13 +72,13 @@ class InquiryController extends Controller
         }
 
         // Dynamically configure mailer from DB settings
-        Config::set('mail.mailers.smtp.host',       $smtp['smtp_host']);
-        Config::set('mail.mailers.smtp.port',        $smtp['smtp_port'] ?? 587);
-        Config::set('mail.mailers.smtp.username',    $smtp['smtp_username']);
-        Config::set('mail.mailers.smtp.password',    $smtp['smtp_password']);
-        Config::set('mail.mailers.smtp.encryption',  $smtp['smtp_encryption'] ?? 'tls');
-        Config::set('mail.from.address',             $smtp['smtp_from_email'] ?? 'noreply@mhtradecap.com');
-        Config::set('mail.from.name',                $smtp['smtp_from_name'] ?? 'MH Trade Capital');
+        Config::set('mail.mailers.smtp.host', $smtp['smtp_host']);
+        Config::set('mail.mailers.smtp.port', $smtp['smtp_port'] ?? 587);
+        Config::set('mail.mailers.smtp.username', $smtp['smtp_username']);
+        Config::set('mail.mailers.smtp.password', $smtp['smtp_password']);
+        Config::set('mail.mailers.smtp.encryption', $smtp['smtp_encryption'] ?? 'tls');
+        Config::set('mail.from.address', $smtp['smtp_from_email'] ?? 'noreply@mhtradecap.com');
+        Config::set('mail.from.name', $smtp['smtp_from_name'] ?? 'MH Trade Capital');
         Config::set('mail.default', 'smtp');
 
         $adminEmail = CmsSetting::get('admin_email', 'contact@mhtradecap.com');
@@ -85,7 +87,7 @@ class InquiryController extends Controller
             Mail::to($adminEmail)->send(new NewInquiryMail($inquiry));
         } catch (\Exception $e) {
             // Silently fail — do not block user submission on mail error
-            \Log::error('Mail send failed: ' . $e->getMessage());
+            \Log::error('Mail send failed: '.$e->getMessage());
         }
     }
 }

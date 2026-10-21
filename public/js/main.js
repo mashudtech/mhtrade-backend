@@ -58,6 +58,219 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Initialize Viewport Hero Slider Engine
+  initHeroSlider();
+
+  function initHeroSlider() {
+    const sliderContainer = document.getElementById('hero-slider-container');
+    if (!sliderContainer) return;
+
+    const slides = Array.from(sliderContainer.querySelectorAll('.hero-slide-item'));
+    if (slides.length <= 1) return;
+
+    const prevBtn = document.getElementById('hero-slider-prev');
+    const nextBtn = document.getElementById('hero-slider-next');
+    const dots = Array.from(document.querySelectorAll('.hero-slider-dot'));
+
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    let isTransitioning = false;
+    let autoPlayTimer = null;
+    const slideDuration = 14000; // 14 seconds gives ample time to read and view full image
+
+    let currentTypeTimer = null;
+
+    function typeSlideHeadline(slide) {
+      if (currentTypeTimer) {
+        clearTimeout(currentTypeTimer);
+        currentTypeTimer = null;
+      }
+
+      const titleElem = slide.querySelector('.hero-title');
+      if (!titleElem) return;
+
+      const mainText = titleElem.getAttribute('data-title') || '';
+      const accentText = titleElem.getAttribute('data-accent') || '';
+
+      if (!mainText && !accentText) return;
+
+      titleElem.innerHTML = '<span class="type-main"></span><span class="type-cursor">|</span>';
+      const mainContainer = titleElem.querySelector('.type-main');
+      const cursor = titleElem.querySelector('.type-cursor');
+
+      let charIndex = 0;
+      const charDelay = 70;
+
+      function typeMain() {
+        if (charIndex < mainText.length) {
+          mainContainer.textContent += mainText.charAt(charIndex);
+          charIndex++;
+          currentTypeTimer = setTimeout(typeMain, charDelay);
+        } else if (accentText) {
+          charIndex = 0;
+          currentTypeTimer = setTimeout(() => {
+            const br = document.createElement('br');
+            const accentSpan = document.createElement('span');
+            accentSpan.className = 'type-accent';
+            titleElem.insertBefore(br, cursor);
+            titleElem.insertBefore(accentSpan, cursor);
+            typeAccent(accentSpan);
+          }, 350);
+        } else {
+          finishTyping();
+        }
+      }
+
+      function typeAccent(accentContainer) {
+        if (charIndex < accentText.length) {
+          accentContainer.textContent += accentText.charAt(charIndex);
+          charIndex++;
+          currentTypeTimer = setTimeout(() => typeAccent(accentContainer), charDelay);
+        } else {
+          finishTyping();
+        }
+      }
+
+      function finishTyping() {
+        currentTypeTimer = setTimeout(() => {
+          cursor?.classList.add('fade-out');
+        }, 1500);
+      }
+
+      currentTypeTimer = setTimeout(typeMain, 250);
+    }
+
+    // Initialize initial slide positions
+    slides.forEach((slide, idx) => {
+      slide.classList.remove('no-transition', 'slide-left', 'slide-right', 'active');
+      if (idx === currentIndex) {
+        slide.classList.add('active');
+        typeSlideHeadline(slide);
+      } else {
+        slide.classList.add('slide-right');
+      }
+    });
+
+    function goToSlide(targetIndex, direction = 'next') {
+      if (isTransitioning) return;
+      targetIndex = (targetIndex + totalSlides) % totalSlides;
+      if (targetIndex === currentIndex) return;
+
+      isTransitioning = true;
+      const oldSlide = slides[currentIndex];
+      const newSlide = slides[targetIndex];
+
+      // Update dot active indicator
+      dots[currentIndex]?.classList.remove('active');
+      dots[targetIndex]?.classList.add('active');
+
+      // Position new slide offscreen without animation before sliding in
+      newSlide.classList.add('no-transition');
+      newSlide.classList.remove('active', 'slide-left', 'slide-right');
+      if (direction === 'next') {
+        newSlide.classList.add('slide-right');
+      } else {
+        newSlide.classList.add('slide-left');
+      }
+
+      // Force browser reflow to apply initial offscreen position
+      void newSlide.offsetWidth;
+
+      // Re-enable smooth transition and slide in
+      newSlide.classList.remove('no-transition');
+
+      requestAnimationFrame(() => {
+        if (direction === 'next') {
+          oldSlide.classList.remove('active');
+          oldSlide.classList.add('slide-left');
+          newSlide.classList.remove('slide-right');
+          newSlide.classList.add('active');
+        } else {
+          oldSlide.classList.remove('active');
+          oldSlide.classList.add('slide-right');
+          newSlide.classList.remove('slide-left');
+          newSlide.classList.add('active');
+        }
+
+        currentIndex = targetIndex;
+        typeSlideHeadline(newSlide);
+
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 850);
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1, 'next');
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1, 'prev');
+    }
+
+    function startAutoPlay() {
+      stopAutoPlay();
+      autoPlayTimer = setInterval(nextSlide, slideDuration);
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+      }
+    }
+
+    function resetAutoPlay() {
+      stopAutoPlay();
+      startAutoPlay();
+    }
+
+    nextBtn?.addEventListener('click', () => {
+      nextSlide();
+      resetAutoPlay();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+      prevSlide();
+      resetAutoPlay();
+    });
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        const dir = idx > currentIndex ? 'next' : 'prev';
+        goToSlide(idx, dir);
+        resetAutoPlay();
+      });
+    });
+
+    sliderContainer.addEventListener('mouseenter', stopAutoPlay);
+    sliderContainer.addEventListener('mouseleave', startAutoPlay);
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    sliderContainer.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoPlay();
+    }, { passive: true });
+
+    sliderContainer.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const deltaX = touchEndX - touchStartX;
+      if (Math.abs(deltaX) > 40) {
+        if (deltaX < 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      startAutoPlay();
+    }, { passive: true });
+
+    startAutoPlay();
+  }
+
   // Global Mobile Navigation Toggle Function
   const navLinks = document.querySelector('.nav-links');
   const mobileNavToggle = document.getElementById('mobile-nav-toggle');

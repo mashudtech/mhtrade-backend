@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 /*
 |--------------------------------------------------------------------------
 | Laravel AdminLTE Configuration
@@ -172,7 +180,7 @@ return [
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -201,7 +209,7 @@ return [
     'register_url' => false,
     'password_reset_url' => false,
     'password_email_url' => false,
-    'profile_url' => false,
+    'profile_url' => 'admin.profile',
 
     /*
     |--------------------------------------------------------------------------
@@ -778,7 +786,7 @@ return [
         ['header' => 'Main Navigation'],
         [
             'text' => 'Dashboard',
-            'url'  => 'admin',
+            'url' => 'admin',
             'icon' => 'bi bi-speedometer2',
             'active' => ['admin'],
         ],
@@ -786,116 +794,69 @@ return [
         ['header' => 'Inquiries'],
         [
             'text' => 'All Inquiries',
-            'url'  => 'admin/inquiries',
+            'url' => 'admin/inquiries',
             'icon' => 'bi bi-inbox-fill',
         ],
 
         ['header' => 'Content Management'],
         [
+            'text' => 'Hero Slider',
+            'url' => 'admin/slides',
+            'icon' => 'bi bi-images',
+        ],
+        [
             'text' => 'Solutions',
-            'url'  => 'admin/solutions',
+            'url' => 'admin/solutions',
             'icon' => 'bi bi-layers-fill',
         ],
         [
             'text' => 'Testimonials',
-            'url'  => 'admin/testimonials',
+            'url' => 'admin/testimonials',
             'icon' => 'bi bi-chat-quote-fill',
         ],
         [
             'text' => 'About Us Page',
-            'url'  => 'admin/pages/about',
+            'url' => 'admin/pages/about',
             'icon' => 'bi bi-file-earmark-person-fill',
         ],
         [
             'text' => 'Why MH Page',
-            'url'  => 'admin/pages/why-mh',
+            'url' => 'admin/pages/why-mh',
             'icon' => 'bi bi-shield-check',
         ],
 
         ['header' => 'Settings'],
         [
             'text' => 'Contact & Social',
-            'url'  => 'admin/settings',
+            'url' => 'admin/settings',
             'icon' => 'bi bi-gear-fill',
         ],
         [
             'text' => 'SMTP / Email',
-            'url'  => 'admin/smtp',
+            'url' => 'admin/smtp',
             'icon' => 'bi bi-envelope-fill',
+        ],
+
+        ['header' => 'Account Settings'],
+        [
+            'text' => 'Profile',
+            'url' => 'admin/profile',
+            'icon' => 'bi bi-person-fill',
+            'active' => ['admin/profile*'],
+        ],
+        [
+            'text' => 'Change Password',
+            'url' => 'admin/password',
+            'icon' => 'bi bi-key-fill',
+            'active' => ['admin/password*'],
         ],
 
         ['header' => 'Website'],
         [
-            'text'   => 'View Public Site',
-            'url'    => '/',
-            'icon'   => 'bi bi-box-arrow-up-right',
+            'text' => 'View Public Site',
+            'url' => '/',
+            'icon' => 'bi bi-box-arrow-up-right',
             'target' => '_blank',
-        ],
-
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'bi bi-person',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'bi bi-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'bi bi-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'danger',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'warning',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'info',
-            'url' => '#',
         ],
     ],
 
@@ -912,13 +873,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*

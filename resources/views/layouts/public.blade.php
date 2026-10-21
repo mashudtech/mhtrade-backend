@@ -13,9 +13,7 @@
   <!-- Font Awesome Icons (Self-Hosted) -->
   <link rel="preload" href="{{ asset('fonts/fontawesome/webfonts/fa-solid-900.woff2') }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ asset('fonts/fontawesome/webfonts/fa-brands-400.woff2') }}" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/fontawesome.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/solid.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/brands.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/all.min.css') }}">
 
   <!-- Main Stylesheet -->
   @php $cssV = file_exists(public_path('css/style.css')) ? filemtime(public_path('css/style.css')) : '1'; @endphp
@@ -32,9 +30,7 @@
 
     @hasSection('hero')
     {{-- Full-viewport hero: header + hero share the 100vh wrapper --}}
-    <div class="hero-viewport-wrapper" id="hero-viewport"
-      style="background-image: url('{{ asset(trim(View::yieldContent("hero_bg", "images/hero/dubai_hero_bg_2k.webp"))) }}');">
-      <div class="hero-viewport-overlay"></div>
+    <div class="hero-viewport-wrapper" id="hero-viewport">
     @endif
 
       <!-- Main Navigation Header -->
@@ -49,20 +45,23 @@
 
             <ul class="nav-links">
               <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
-                <a href="{{ route('home') }}" class="nav-link">Home</a>
+                <a href="{{ route('home') }}" class="nav-link nav-home-link" aria-label="Home" title="Home"><i class="fas fa-home"></i></a>
               </li>
               <li class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">
                 <a href="{{ route('about') }}" class="nav-link">About Us</a>
               </li>
               <li class="nav-item {{ request()->routeIs('solutions*') ? 'active' : '' }}">
                 <a href="{{ route('solutions') }}" class="nav-link">Solutions <i class="fas fa-chevron-down" style="font-size:10px;"></i></a>
+                @php
+                  $navSolutions = \App\Models\Solution::published()->get();
+                @endphp
+                @if($navSolutions->isNotEmpty())
                 <ul class="dropdown-menu">
-                  <li class="dropdown-item"><a href="{{ route('solutions.show', 'trade-finance') }}">Trade Finance &amp; Banking Instruments</a></li>
-                  <li class="dropdown-item"><a href="{{ route('solutions.show', 'uae-banking') }}">UAE Business Setup &amp; Corporate Banking</a></li>
-                  <li class="dropdown-item"><a href="{{ route('solutions.show', 'project-finance') }}">Project Finance</a></li>
-                  <li class="dropdown-item"><a href="{{ route('solutions.show', 'commodity-trade') }}">Commodity Trade Solutions</a></li>
-                  <li class="dropdown-item"><a href="{{ route('solutions.show', 'general-inquiry') }}">General Business Inquiry</a></li>
+                  @foreach($navSolutions as $navSol)
+                    <li class="dropdown-item"><a href="{{ route('solutions.show', $navSol->slug) }}">{{ $navSol->title }}</a></li>
+                  @endforeach
                 </ul>
+                @endif
               </li>
               <li class="nav-item {{ request()->routeIs('why-mh') ? 'active' : '' }}">
                 <a href="{{ route('why-mh') }}" class="nav-link">Why MH</a>

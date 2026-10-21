@@ -55,7 +55,7 @@
               @error('hero_headline_accent')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-12">
-              <small class="text-muted"><i class="bi bi-info-circle me-1"></i>No HTML code required! Line 1 displays in white and Line 2 automatically displays below it in the signature gold accent color.</small>
+              <small class="text-muted"><i class="bi bi-info-circle me-1"></i>No HTML required. Line 1 displays in white, and Line 2 automatically displays below it in the signature gold accent color.</small>
             </div>
           </div>
 
@@ -95,68 +95,70 @@
             : $solution->items->map(fn ($item) => [
                 'id' => $item->id,
                 'title' => $item->title,
-                'subtitle' => $item->subtitle,
                 'desc' => $item->desc,
-                'details' => $item->details,
-                'summary' => $item->summary,
+                'image' => $item->image,
+                'image_url' => $item->image_url,
             ])->all();
         $solutionItems = is_array($solutionItems) ? array_values(array_filter($solutionItems, 'is_array')) : [];
-        $solutionItems = array_map(fn ($item) => array_map(
-            fn ($value) => is_scalar($value) ? $value : '',
-            $item
-        ), $solutionItems);
       @endphp
 
+      <!-- Simplified Solution Items: Image + Title + Description -->
       <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h3 class="card-title">Solution Items / Instruments</h3>
+          <div>
+            <h3 class="card-title fw-bold mb-0">Solution Items / Breakdown Cards</h3>
+            <span class="badge bg-primary ms-2">{{ count($solutionItems) }} Items</span>
+          </div>
           <button type="button" class="btn btn-sm btn-outline-primary" id="add-solution-item">
             <i class="bi bi-plus-lg"></i> Add Item
           </button>
         </div>
         <div class="card-body">
           <input type="hidden" name="items_form_submitted" value="1">
-          <p class="text-muted small">Use the arrow controls to set the order items appear on the public solution page.</p>
+          <p class="text-muted small">Each item is displayed on the public solution details page as a card containing its <strong>Image</strong>, <strong>Title</strong>, and <strong>Description</strong>.</p>
           <div id="solution-items">
           @foreach($solutionItems as $i => $itemData)
           <div class="solution-item-row border rounded p-3 mb-3 bg-light">
             @if(!empty($itemData['id']))
               <input type="hidden" name="items[{{ $i }}][id]" value="{{ $itemData['id'] }}" data-item-field="id">
             @endif
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <strong class="item-position">Item {{ $i + 1 }}</strong>
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+              <strong class="item-position text-primary">Item {{ $i + 1 }}</strong>
               <div class="d-flex gap-1">
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-item-action="up" aria-label="Move item up" title="Move up">
+                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" data-item-action="up" aria-label="Move item up" title="Move up">
                   <i class="bi bi-arrow-up"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-item-action="down" aria-label="Move item down" title="Move down">
+                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" data-item-action="down" aria-label="Move item down" title="Move down">
                   <i class="bi bi-arrow-down"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-danger" data-item-action="remove">
-                  <i class="bi bi-trash"></i> Remove
+                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" data-item-action="remove" title="Remove item">
+                  <i class="bi bi-trash"></i>
                 </button>
               </div>
             </div>
-            <div class="row g-2">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold small">Title *</label>
-                <input type="text" name="items[{{ $i }}][title]" data-item-field="title" class="form-control form-control-sm" value="{{ $itemData['title'] ?? '' }}" required>
+            <div class="row g-2 align-items-start">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold small mb-1">Item Image</label>
+                <div class="d-flex flex-column align-items-center border rounded p-2 bg-white">
+                  @php
+                    $imgSrc = !empty($itemData['image_url']) 
+                        ? $itemData['image_url'] 
+                        : (!empty($itemData['image']) ? (str_starts_with($itemData['image'], 'http') || str_starts_with($itemData['image'], 'images/') ? asset($itemData['image']) : asset('images/uploads/' . $itemData['image'])) : asset('images/hero/dubai_hero_bg.webp'));
+                  @endphp
+                  <img class="item-img-preview rounded mb-2 border" src="{{ $imgSrc }}" style="width: 100%; height: 80px; object-fit: cover;">
+                  <input type="hidden" name="items[{{ $i }}][existing_image]" data-item-field="existing_image" value="{{ $itemData['image'] ?? '' }}">
+                  <input type="file" name="items[{{ $i }}][image_file]" data-item-field="image_file" class="form-control form-control-sm item-file-input" accept="image/*">
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold small">Subtitle *</label>
-                <input type="text" name="items[{{ $i }}][subtitle]" data-item-field="subtitle" class="form-control form-control-sm" value="{{ $itemData['subtitle'] ?? '' }}" required>
-              </div>
-              <div class="col-12">
-                <label class="form-label fw-semibold small">Description *</label>
-                <textarea name="items[{{ $i }}][desc]" data-item-field="desc" class="form-control form-control-sm" rows="2" required>{{ $itemData['desc'] ?? '' }}</textarea>
-              </div>
-              <div class="col-12">
-                <label class="form-label fw-semibold small">Details</label>
-                <textarea name="items[{{ $i }}][details]" data-item-field="details" class="form-control form-control-sm" rows="2">{{ $itemData['details'] ?? '' }}</textarea>
-              </div>
-              <div class="col-12">
-                <label class="form-label fw-semibold small">Summary *</label>
-                <textarea name="items[{{ $i }}][summary]" data-item-field="summary" class="form-control form-control-sm" rows="1" required>{{ $itemData['summary'] ?? '' }}</textarea>
+              <div class="col-md-9">
+                <div class="mb-2">
+                  <label class="form-label fw-semibold small mb-1">Title <span class="text-danger">*</span></label>
+                  <input type="text" name="items[{{ $i }}][title]" data-item-field="title" class="form-control form-control-sm" value="{{ $itemData['title'] ?? '' }}" placeholder="Item title" required>
+                </div>
+                <div>
+                  <label class="form-label fw-semibold small mb-1">Description <span class="text-danger">*</span></label>
+                  <textarea name="items[{{ $i }}][desc]" data-item-field="desc" class="form-control form-control-sm" rows="3" placeholder="Brief description of this capability/instrument item..." required>{{ $itemData['desc'] ?? '' }}</textarea>
+                </div>
               </div>
             </div>
           </div>
@@ -165,40 +167,38 @@
 
           <template id="solution-item-template">
             <div class="solution-item-row border rounded p-3 mb-3 bg-light">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong class="item-position"></strong>
+              <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                <strong class="item-position text-primary"></strong>
                 <div class="d-flex gap-1">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" data-item-action="up" aria-label="Move item up" title="Move up">
+                  <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" data-item-action="up" aria-label="Move item up" title="Move up">
                     <i class="bi bi-arrow-up"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" data-item-action="down" aria-label="Move item down" title="Move down">
+                  <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" data-item-action="down" aria-label="Move item down" title="Move down">
                     <i class="bi bi-arrow-down"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-outline-danger" data-item-action="remove">
-                    <i class="bi bi-trash"></i> Remove
+                  <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" data-item-action="remove" title="Remove item">
+                    <i class="bi bi-trash"></i>
                   </button>
                 </div>
               </div>
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold small">Title *</label>
-                  <input type="text" data-item-field="title" class="form-control form-control-sm" required>
+              <div class="row g-2 align-items-start">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold small mb-1">Item Image</label>
+                  <div class="d-flex flex-column align-items-center border rounded p-2 bg-white">
+                    <img class="item-img-preview rounded mb-2 border" src="{{ asset('images/hero/dubai_hero_bg.webp') }}" style="width: 100%; height: 80px; object-fit: cover;">
+                    <input type="hidden" data-item-field="existing_image" value="">
+                    <input type="file" data-item-field="image_file" class="form-control form-control-sm item-file-input" accept="image/*">
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold small">Subtitle *</label>
-                  <input type="text" data-item-field="subtitle" class="form-control form-control-sm" required>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fw-semibold small">Description *</label>
-                  <textarea data-item-field="desc" class="form-control form-control-sm" rows="2" required></textarea>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fw-semibold small">Details</label>
-                  <textarea data-item-field="details" class="form-control form-control-sm" rows="2"></textarea>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fw-semibold small">Summary *</label>
-                  <textarea data-item-field="summary" class="form-control form-control-sm" rows="1" required></textarea>
+                <div class="col-md-9">
+                  <div class="mb-2">
+                    <label class="form-label fw-semibold small mb-1">Title <span class="text-danger">*</span></label>
+                    <input type="text" data-item-field="title" class="form-control form-control-sm" placeholder="Item title" required>
+                  </div>
+                  <div>
+                    <label class="form-label fw-semibold small mb-1">Description <span class="text-danger">*</span></label>
+                    <textarea data-item-field="desc" class="form-control form-control-sm" rows="3" placeholder="Brief description of this capability/instrument item..." required></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,7 +211,7 @@
       <!-- Featured Image Card -->
       <div class="card shadow-sm mb-3">
         <div class="card-header bg-light">
-          <h3 class="card-title fw-bold text-dark"><i class="bi bi-image me-2 text-primary"></i>Featured Image</h3>
+          <h3 class="card-title fw-bold text-dark"><i class="bi bi-image me-2 text-primary"></i>Featured Banner Image</h3>
         </div>
         <div class="card-body">
           <div class="mb-3 text-center">
@@ -277,6 +277,18 @@
       }
 
       updateItemRows();
+    });
+
+    itemList.addEventListener('change', (event) => {
+      const input = event.target.closest('.item-file-input');
+      if (input && input.files && input.files[0]) {
+        const preview = input.closest('.solution-item-row').querySelector('.item-img-preview');
+        if (preview) {
+          const reader = new FileReader();
+          reader.onload = (e) => { preview.src = e.target.result; };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
     });
 
     updateItemRows();

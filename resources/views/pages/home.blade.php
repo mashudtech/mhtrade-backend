@@ -5,38 +5,100 @@
 @section('hero_bg', 'images/hero/dubai_hero_bg_2k.webp')
 
 @section('hero')
-{{-- Hero Section (inside 100vh wrapper) --}}
-<section class="hero-section">
-  <div class="container hero-content">
-    <div class="hero-glass-card">
-      <div class="hero-tag">
-        <i class="fas fa-shield-halved"></i> Trade Finance • Banking Instruments • Project Finance • Commodity Trade
-      </div>
+<div class="hero-slider-container" id="hero-slider-container">
+  @forelse($heroSlides as $slide)
+    <div class="hero-slide-item {{ $loop->first ? 'active' : '' }}" data-slide-index="{{ $loop->index }}">
+      <div class="hero-slide-bg" style="background-image: url('{{ $slide->image_url }}');"></div>
+      <div class="hero-slide-overlay"></div>
 
-      <h1 class="hero-title">Structured Trade Finance &amp; <br>
-        <span>Capital Solutions</span>
-      </h1>
+      <section class="hero-section">
+        <div class="container hero-content">
+          <div class="hero-glass-card">
+            @if($slide->tag)
+              <div class="hero-tag">
+                <i class="fas fa-shield-halved"></i> {{ $slide->tag }}
+              </div>
+            @endif
 
-      <p class="hero-subtitle">Connecting Real Transactions with the Right Financial Solutions
-        <br>Dubai-Based | 40+ Banking Relationships Worldwide | 11+ Years of Experience
-      </p>
+            <h1 class="hero-title" data-title="{{ $slide->title }}" data-accent="{{ $slide->title_accent }}">{!! format_title($slide->title, $slide->title_accent) !!}</h1>
 
-      <div class="hero-actions">
-        <button class="btn-gold open-inquiry-modal" data-vertical="general"
-          style="padding: 14px 32px; font-size: 15px; border-radius: 10px;">
-          <i class="fas fa-paper-plane"></i> Submit Requirement
-        </button>
+            @if($slide->subtitle)
+              <p class="hero-subtitle">{!! nl2br(e($slide->subtitle)) !!}</p>
+            @endif
+
+            <div class="hero-actions">
+              @if(empty($slide->button_link) || $slide->button_link === '#')
+                <button class="btn-gold open-inquiry-modal" data-vertical="{{ $slide->button_vertical ?: 'general' }}"
+                  style="padding: 14px 32px; font-size: 15px; border-radius: 10px;">
+                  <i class="fas fa-paper-plane"></i> {{ $slide->button_text ?: 'Submit Requirement' }}
+                </button>
+              @else
+                <a href="{{ $slide->button_link }}" class="btn-gold"
+                  style="padding: 14px 32px; font-size: 15px; border-radius: 10px; text-decoration: none;">
+                  <i class="fas fa-arrow-right"></i> {{ $slide->button_text ?: 'Submit Requirement' }}
+                </a>
+              @endif
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  @empty
+    <div class="hero-slide-item active" data-slide-index="0">
+      <div class="hero-slide-bg" style="background-image: url('{{ asset('images/hero/dubai_hero_bg_2k.webp') }}');"></div>
+      <div class="hero-slide-overlay"></div>
+      <section class="hero-section">
+        <div class="container hero-content">
+          <div class="hero-glass-card">
+            <div class="hero-tag">
+              <i class="fas fa-shield-halved"></i> Trade Finance • Banking Instruments • Project Finance • Commodity Trade
+            </div>
+            <h1 class="hero-title" data-title="Structured Trade Finance &amp;" data-accent="Capital Solutions">Structured Trade Finance &amp; <br>
+              <span>Capital Solutions</span>
+            </h1>
+            <p class="hero-subtitle">Connecting Real Transactions with the Right Financial Solutions
+              <br>Dubai-Based | 40+ Banking Relationships Worldwide | 11+ Years of Experience
+            </p>
+            <div class="hero-actions">
+              <button class="btn-gold open-inquiry-modal" data-vertical="general"
+                style="padding: 14px 32px; font-size: 15px; border-radius: 10px;">
+                <i class="fas fa-paper-plane"></i> Submit Requirement
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  @endforelse
+
+  <!-- Outside Container: Left and Right Navigation Controls -->
+  @if($heroSlides->count() > 1)
+    <button class="hero-slider-nav hero-slider-prev" id="hero-slider-prev" aria-label="Previous Slide">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="hero-slider-nav hero-slider-next" id="hero-slider-next" aria-label="Next Slide">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  @endif
+
+  <!-- Inside Container: Bottom-Right Notification Dots -->
+  @if($heroSlides->count() > 1)
+    <div class="hero-slider-dots-wrapper">
+      <div class="container">
+        <div class="hero-slider-dots" id="hero-slider-dots">
+          @foreach($heroSlides as $slide)
+            <button class="hero-slider-dot {{ $loop->first ? 'active' : '' }}" data-slide-to="{{ $loop->index }}" aria-label="Slide {{ $loop->iteration }}"></button>
+          @endforeach
+        </div>
       </div>
     </div>
-  </div>
+  @endif
 
   <a href="#requirement-ingestion" class="hero-scroll-hint">
     <span>Explore</span>
     <i class="fas fa-chevron-down"></i>
   </a>
-</section>
-
-</div>{{-- closes hero-viewport-wrapper --}}
+</div>
 @endsection
 
 @section('content')

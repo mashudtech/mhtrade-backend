@@ -1,3 +1,15 @@
+<!-- Floating WhatsApp Button -->
+@php
+  $floatingWaLink = \App\Models\CmsSetting::getValue('whatsapp_link');
+  if (empty($floatingWaLink)) {
+    $rawWa = \App\Models\CmsSetting::getValue('whatsapp', '+971565837969');
+    $floatingWaLink = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $rawWa);
+  }
+@endphp
+<a href="{{ $floatingWaLink }}" target="_blank" rel="noopener noreferrer" id="floating-whatsapp" class="floating-whatsapp-btn" aria-label="Chat with us on WhatsApp" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
 <!-- Floating Back to Top Button -->
 <button id="back-to-top" class="back-to-top-btn" aria-label="Back to top">
   <i class="fas fa-chevron-up"></i>
@@ -18,7 +30,7 @@
         <input type="hidden" name="_token" id="inquiry-csrf-token" value="{{ csrf_token() }}">
 
         <div class="form-group">
-          <label class="form-label" for="req-vertical">Requirement Category *</label>
+          <label class="form-label" for="req-vertical">Requirement Category <span class="req-star">*</span></label>
           <select class="form-control" name="vertical" id="req-vertical" required>
             <option value="lc">Trade Finance &amp; Banking Instruments</option>
             <option value="uae-banking">UAE Business Setup &amp; Corporate Banking</option>
@@ -30,18 +42,18 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="req-name">Full Name *</label>
+            <label class="form-label" for="req-name">Full Name <span class="req-star">*</span></label>
             <input type="text" class="form-control" name="name" id="req-name" placeholder="John Doe" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="req-company">Company Name</label>
-            <input type="text" class="form-control" name="company" id="req-company" placeholder="Global Trade Corp">
+            <label class="form-label" for="req-company">Company Name <span class="req-star">*</span></label>
+            <input type="text" class="form-control" name="company" id="req-company" placeholder="Global Trade Corp" required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="req-email">Work Email *</label>
+            <label class="form-label" for="req-email">Work Email <span class="req-star">*</span></label>
             <input type="email" class="form-control" name="email" id="req-email" placeholder="john@company.com" required>
           </div>
           <div class="form-group">
@@ -56,9 +68,9 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="req-details">Requirement Specifications</label>
+          <label class="form-label" for="req-details">Requirement Specifications <span class="req-star">*</span></label>
           <textarea class="form-control" name="details" id="req-details" rows="3"
-            placeholder="Target instrument amount, commodity tonnage, origin/destination preferences..."></textarea>
+            placeholder="Target instrument amount, commodity tonnage, origin/destination preferences..." required></textarea>
         </div>
 
         <div class="form-group">

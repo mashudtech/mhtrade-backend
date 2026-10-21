@@ -131,7 +131,7 @@
         <form id="contact-page-form" enctype="multipart/form-data">
           @csrf
           <div style="margin-bottom: 18px;">
-            <label class="form-label" for="contact-vertical">Requirement Category *</label>
+            <label class="form-label" for="contact-vertical">Requirement Category <span class="req-star">*</span></label>
             <select class="form-control" name="vertical" id="contact-vertical" required>
               <option value="lc">Trade Finance &amp; Banking Instruments</option>
               <option value="uae-banking">UAE Business Setup &amp; Corporate Banking</option>
@@ -143,18 +143,18 @@
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
             <div>
-              <label class="form-label" for="contact-name">Full Name *</label>
+              <label class="form-label" for="contact-name">Full Name <span class="req-star">*</span></label>
               <input type="text" class="form-control" name="name" id="contact-name" placeholder="John Doe" required>
             </div>
             <div>
-              <label class="form-label" for="contact-company">Company Name</label>
-              <input type="text" class="form-control" name="company" id="contact-company" placeholder="Global Trade Corp">
+              <label class="form-label" for="contact-company">Company Name <span class="req-star">*</span></label>
+              <input type="text" class="form-control" name="company" id="contact-company" placeholder="Global Trade Corp" required>
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
             <div>
-              <label class="form-label" for="contact-email">Email Address *</label>
+              <label class="form-label" for="contact-email">Email Address <span class="req-star">*</span></label>
               <input type="email" class="form-control" name="email" id="contact-email" placeholder="john@company.com" required>
             </div>
             <div>
@@ -169,8 +169,8 @@
           </div>
 
           <div style="margin-bottom: 22px;">
-            <label class="form-label" for="contact-details">Requirement Details</label>
-            <textarea class="form-control" name="details" id="contact-details" rows="3" placeholder="Describe the transaction, instrument amount, commodity tonnage, origin/destination..."></textarea>
+            <label class="form-label" for="contact-details">Requirement Specifications <span class="req-star">*</span></label>
+            <textarea class="form-control" name="details" id="contact-details" rows="3" placeholder="Describe the transaction, instrument amount, commodity tonnage, origin/destination..." required></textarea>
           </div>
 
           <div id="contact-error-msg" style="display:none; color:#e74c3c; font-size:13px; margin-bottom:12px;"></div>

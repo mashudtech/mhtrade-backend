@@ -14,10 +14,12 @@
       <div>
         <h4 class="footer-title">Financial Verticals</h4>
         <ul class="footer-links-list">
-          <li><a href="{{ route('solutions.show', 'trade-finance') }}">Trade Finance &amp; Banking Instruments</a></li>
-          <li><a href="{{ route('solutions.show', 'uae-banking') }}">UAE Business Setup &amp; Corporate Banking</a></li>
-          <li><a href="{{ route('solutions.show', 'project-finance') }}">Project Finance</a></li>
-          <li><a href="{{ route('solutions.show', 'commodity-trade') }}">Commodity Trade Solutions</a></li>
+          @php
+            $footerSolutions = \App\Models\Solution::published()->take(5)->get();
+          @endphp
+          @foreach($footerSolutions as $fSol)
+            <li><a href="{{ route('solutions.show', $fSol->slug) }}">{{ $fSol->title }}</a></li>
+          @endforeach
         </ul>
       </div>
 

@@ -29,4 +29,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the URL for the AdminLTE user menu profile button.
+     */
+    public function adminlte_profile_url(): string
+    {
+        return route('admin.profile');
+    }
+
+    /**
+     * Get the description text for the AdminLTE user menu.
+     */
+    public function adminlte_desc(): string
+    {
+        return $this->role === 'super_admin' ? 'Super Administrator' : 'Administrator';
+    }
 }

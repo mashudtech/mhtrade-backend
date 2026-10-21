@@ -4,27 +4,27 @@
 @section('meta_desc', $solution->short_desc)
 
 @section('page_hero')
-<section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ $solution->image_url }}');">
+<section class="page-hero-section service-detail-hero" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.55) 0%, rgba(10, 25, 47, 0.65) 100%), url('{{ $solution->image_url }}');">
   <div class="container">
-    <div class="hero-tag" style="margin: 0 0 16px; display: inline-flex;">
+    <div class="hero-tag">
       <i class="fas fa-layer-group"></i> Solution {{ $solution->num }} — {{ $solution->title }}
     </div>
     
-    <h1 class="page-hero-title" style="max-width: 920px; margin: 0 0 20px;">
+    <h1 class="page-hero-title">
       {!! format_title($solution->hero_headline ?: $solution->title) !!}
     </h1>
 
     @if($solution->badge)
-    <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border-gold); padding: 8px 22px; border-radius: 30px; display: inline-block; color: var(--gold-primary); font-size: 13px; font-weight: 600; margin-bottom: 24px; max-width: 900px;">
+    <div class="service-hero-badge">
       <i class="fas fa-tags"></i> {{ $solution->badge }}
     </div>
     @endif
 
-    <p class="page-hero-desc" style="max-width: 840px;">
+    <p class="page-hero-desc">
       {{ $solution->overview ?: $solution->short_desc }}
     </p>
 
-    <div style="display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap; margin-top: 24px;">
+    <div class="hero-btn-group">
       <button class="btn-gold open-inquiry-modal" data-vertical="{{ $solution->slug }}">
         <i class="fas fa-paper-plane"></i> Submit Requirement
       </button>
@@ -38,7 +38,7 @@
 
 @section('content')
 <!-- Main Detail Content -->
-<main class="container" style="padding: 70px 24px; max-width: 1240px;">
+<main class="container" style="padding: 70px 24px;">
 
   <!-- Executive Overview Section -->
   <section style="margin-bottom: 60px;">
@@ -64,32 +64,22 @@
 
   <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 50px 0;">
 
-  <!-- Paragraph-by-Paragraph Capability Details Section (3-Card Grid Layout) -->
+  <!-- Simplified Solution Items Breakdown (Card: Image -> Title -> Description only) -->
   @if($solution->items->count())
   <section style="margin-bottom: 70px;">
-    <div class="section-subtitle">Detailed Breakdown</div>
-    <h2 class="section-title" style="font-size: 30px; margin-bottom: 40px;">Structured Specifications</h2>
+    <div class="section-subtitle">Detailed Capabilities</div>
+    <h2 class="section-title" style="font-size: 30px; margin-bottom: 35px;">Key Services &amp; Frameworks</h2>
 
-    <div class="solution-breakdown-grid">
+    <div class="solution-simple-grid">
       @foreach($solution->items as $item)
-      <article class="solution-item-card">
-        <!-- Card Header: Title & Subtitle -->
-        <div class="solution-card-header">
-          <h3 class="solution-card-title">{{ $item->title }}</h3>
-          <h4 class="solution-card-subtitle">{{ $item->subtitle }}</h4>
+      <article class="solution-simple-card">
+        <div class="simple-card-img-wrapper">
+          <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="simple-card-img" loading="lazy">
+          <div class="simple-card-overlay"></div>
         </div>
-
-        <!-- Card Body: Description & Details -->
-        <div class="solution-card-body">
-          <p class="solution-card-desc">{{ $item->desc }}</p>
-          @if($item->details)
-            <p class="solution-card-details">{{ $item->details }}</p>
-          @endif
-          @if($item->summary)
-          <div class="solution-card-summary">
-            <strong style="color: var(--gold-primary); font-style: normal;">Summary:</strong> {{ str_replace('In simple terms: ', '', $item->summary) }}
-          </div>
-          @endif
+        <div class="simple-card-body">
+          <h3 class="simple-card-title">{{ $item->title }}</h3>
+          <p class="simple-card-desc">{{ $item->desc }}</p>
         </div>
       </article>
       @endforeach
