@@ -337,7 +337,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function slideNext() {
     if (!verticalsGridWrapper) return;
     const card = verticalsGridWrapper.querySelector('.vertical-card');
-    const scrollAmount = (card?.offsetWidth || 300) + 24;
+    const grid = verticalsGridWrapper.querySelector('.verticals-grid');
+    const gap = grid ? (parseFloat(window.getComputedStyle(grid).gap) || 24) : 24;
+    const scrollAmount = (card?.offsetWidth || 300) + gap;
     const maxScroll = verticalsGridWrapper.scrollWidth - verticalsGridWrapper.clientWidth;
 
     if (verticalsGridWrapper.scrollLeft >= maxScroll - 15) {
@@ -350,7 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function slidePrev() {
     if (!verticalsGridWrapper) return;
     const card = verticalsGridWrapper.querySelector('.vertical-card');
-    const scrollAmount = (card?.offsetWidth || 300) + 24;
+    const grid = verticalsGridWrapper.querySelector('.verticals-grid');
+    const gap = grid ? (parseFloat(window.getComputedStyle(grid).gap) || 24) : 24;
+    const scrollAmount = (card?.offsetWidth || 300) + gap;
     const maxScroll = verticalsGridWrapper.scrollWidth - verticalsGridWrapper.clientWidth;
 
     if (verticalsGridWrapper.scrollLeft <= 15) {

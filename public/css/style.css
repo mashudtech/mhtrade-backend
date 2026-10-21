@@ -171,9 +171,11 @@ a {
 
 /* Container */
 .container {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
+  box-sizing: border-box;
 }
 
 /* Top Contact Bar */
@@ -1346,6 +1348,10 @@ header.main-header.scrolled {
 
 /* Verticals Showcase Section (Hybrid Grid-Slider System) */
 .verticals-section {
+  width: 100%;
+  max-width: 1280px;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 90px 24px;
 }
 
@@ -1354,6 +1360,7 @@ header.main-header.scrolled {
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 40px;
+  width: 100%;
 }
 
 .section-header.text-left {
@@ -1400,6 +1407,10 @@ header.main-header.scrolled {
   -ms-overflow-style: none;
   padding: 10px 0 20px;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
 .verticals-grid-wrapper::-webkit-scrollbar {
@@ -1410,6 +1421,7 @@ header.main-header.scrolled {
   display: flex;
   gap: 24px;
   width: 100%;
+  min-width: 0;
 }
 
 .vertical-card {
@@ -1444,15 +1456,57 @@ header.main-header.scrolled {
 }
 
 @media (max-width: 768px) {
+  .verticals-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .section-header-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  .section-header.text-left {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .section-header.text-left .section-title,
+  .section-header.text-left .section-desc {
+    width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
   .verticals-grid-wrapper {
     scroll-snap-type: x mandatory;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .verticals-grid {
+    gap: 16px;
+    width: 100% !important;
+    min-width: 0 !important;
   }
 
   .vertical-card {
-    flex: 0 0 100%;
-    min-width: 100%;
-    width: 100%;
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }
 
