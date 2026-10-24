@@ -3,7 +3,7 @@
 @section('title', 'Contact Us | Dubai Operational Desk — MH Trade Capital Solutions')
 @section('meta_desc', 'Get in touch with MH Trade Capital Solutions in Dubai, UAE. Contact our capital desk for trade finance, banking setup, project funding, and commodity sourcing requirements.')
 @section('page_hero')
-<section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ asset('images/hero/dubai_hero_bg.webp') }}');">
+<section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ asset('images/hero/contact-page-banner.jpg') }}');">
   <div class="container">
     <div class="hero-tag" style="margin: 0 0 16px; display: inline-flex;">
       <i class="fas fa-headset"></i> Dubai Commercial Desk &amp; Global Inquiries

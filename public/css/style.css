@@ -1199,7 +1199,7 @@ header.main-header.scrolled {
 
 .page-hero-desc {
   font-size: 18px;
-  color: var(--text-muted);
+  color: #ffffff !important;
   max-width: 840px;
   margin: 0 0 30px 0 !important;
   line-height: 1.6;
