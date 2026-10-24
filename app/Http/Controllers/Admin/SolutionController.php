@@ -71,10 +71,10 @@ class SolutionController extends Controller
             'hero_headline' => $formattedHeadline ?: $validated['title'],
             'badge' => $validated['badge'] ?? $validated['title'],
             'short_desc' => $validated['short_desc'],
-            'overview' => $validated['overview'],
+            'overview' => $this->cleanHtml($validated['overview'] ?? null) ?? '',
             'image' => null,
-            'process_text' => $validated['process_text'] ?? null,
-            'highlight_banner' => $validated['highlight_banner'] ?? null,
+            'process_text' => $this->cleanHtml($validated['process_text'] ?? null),
+            'highlight_banner' => $this->cleanHtml($validated['highlight_banner'] ?? null),
             'is_published' => true,
             'sort_order' => $sortOrder,
         ];
@@ -173,9 +173,9 @@ class SolutionController extends Controller
             'hero_headline' => $formattedHeadline,
             'badge' => $validated['badge'],
             'short_desc' => $validated['short_desc'],
-            'overview' => $validated['overview'],
-            'process_text' => $validated['process_text'] ?? null,
-            'highlight_banner' => $validated['highlight_banner'] ?? null,
+            'overview' => $this->cleanHtml($validated['overview'] ?? null) ?? '',
+            'process_text' => $this->cleanHtml($validated['process_text'] ?? null),
+            'highlight_banner' => $this->cleanHtml($validated['highlight_banner'] ?? null),
         ];
 
         if ($request->hasFile('image_file')) {
@@ -269,5 +269,22 @@ class SolutionController extends Controller
         $status = $solution->is_published ? 'published' : 'unpublished';
 
         return back()->with('success', "Solution {$status} successfully.");
+    }
+
+    private function cleanHtml(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $plain = strip_tags($value, '<img>');
+        $plain = html_entity_decode($plain, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $plain = trim(str_replace("\xc2\xa0", ' ', $plain));
+
+        if ($plain === '') {
+            return null;
+        }
+
+        return trim($value);
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Our Core Capabilities & Solutions | MH Trade Capital Solutions Dubai')
-@section('meta_desc', 'Explore all 5 core business capabilities of MH Trade Capital Solutions — Trade Finance, UAE Corporate Banking, Project Finance, Commodity Sourcing, and General Business Procurement.')
+@section('meta_desc', 'Explore core business capabilities of MH Trade Capital Solutions — Trade Finance, UAE Corporate Banking, Project Finance, Commodity Sourcing, and General Business Procurement.')
 @section('page_hero')
 <section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ asset('images/hero/dubai_hero_bg.webp') }}');">
   <div class="container">
@@ -29,7 +29,7 @@
 
   <div class="section-header text-center" style="margin-bottom: 50px;">
     <div class="section-subtitle">Capability Directory</div>
-    <h2 class="section-title">5 Core Financial &amp; Sourcing Verticals</h2>
+    <h2 class="section-title">Core Financial &amp; Sourcing Verticals</h2>
     <p class="section-desc">Select any capability below to view its complete instrument specifications, commercial frameworks, and execution terms.</p>
   </div>
 

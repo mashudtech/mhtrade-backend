@@ -29,7 +29,7 @@
           <li><a href="{{ route('why-mh') }}">Why MH — Dubai Advantage</a></li>
           <li><a href="{{ route('contact') }}">Contact Commercial Desk</a></li>
           <li><a href="{{ route('solutions.show', 'general-inquiry') }}">UAE Sourcing &amp; Procurement</a></li>
-          <li><a href="{{ route('solutions') }}">Browse All 5 Capabilities</a></li>
+          <li><a href="{{ route('solutions') }}">Browse All Capabilities</a></li>
         </ul>
       </div>
 

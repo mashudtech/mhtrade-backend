@@ -36,11 +36,25 @@ class Solution extends Model
             return asset($this->image);
         }
 
-        return asset('images/verticals/' . $this->image);
+        return asset('images/verticals/'.$this->image);
     }
 
     public function scopePublished($query)
     {
         return $query->where('is_published', true)->orderBy('sort_order');
+    }
+
+    public function hasMeaningfulContent(string $field): bool
+    {
+        $value = $this->{$field} ?? null;
+        if ($value === null) {
+            return false;
+        }
+
+        $plain = strip_tags((string) $value, '<img>');
+        $plain = html_entity_decode($plain, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $plain = trim(str_replace("\xc2\xa0", ' ', $plain));
+
+        return $plain !== '';
     }
 }

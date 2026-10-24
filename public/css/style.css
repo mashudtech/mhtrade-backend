@@ -935,16 +935,16 @@ header.main-header.scrolled {
   color: var(--gold-primary);
 }
 
-/* Floating WhatsApp Button (Positioned Directly Above Back to Top) */
+/* Floating WhatsApp Button (Fixed on Viewport Bottom Right) */
 .floating-whatsapp-btn {
   position: fixed;
   bottom: 140px;
   right: 30px;
   width: 48px;
   height: 48px;
-  background: #25D366;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #25D366 !important;
+  border: 1.5px solid #25D366;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -952,20 +952,25 @@ header.main-header.scrolled {
   font-size: 26px;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45), 0 0 15px rgba(37, 211, 102, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 10px rgba(37, 211, 102, 0.2);
   z-index: 999;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .floating-whatsapp-btn:hover {
-  background: #20bd5a;
+  background: #25D366;
   color: #FFFFFF !important;
+  border-color: #25D366;
   transform: translateY(-4px) scale(1.08);
   box-shadow: 0 10px 25px rgba(37, 211, 102, 0.6), 0 0 20px rgba(37, 211, 102, 0.4);
 }
 
 .floating-whatsapp-btn i {
   line-height: 1;
+  color: inherit;
+  transition: color 0.3s ease;
 }
 
 /* Floating Back to Top Button */

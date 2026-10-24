@@ -20,9 +20,11 @@
     </div>
     @endif
 
+    @if(filled(trim(strip_tags((string)($solution->overview ?: $solution->short_desc), '<img>'))))
     <p class="page-hero-desc">
       {{ $solution->overview ?: $solution->short_desc }}
     </p>
+    @endif
 
     <div class="hero-btn-group">
       <button class="btn-gold open-inquiry-modal" data-vertical="{{ $solution->slug }}">
@@ -45,15 +47,17 @@
     <div class="section-subtitle">Overview &amp; Framework</div>
     <h2 style="font-size: 32px; color: #FFFFFF; font-weight: 800; margin-bottom: 20px;">{{ $solution->title }}</h2>
 
+    @if($solution->hasMeaningfulContent('overview'))
     <div style="font-size: 17px; color: #E2E8F0; line-height: 1.8; margin-bottom: 24px;">{!! $solution->overview !!}</div>
+    @endif
 
-    @if($solution->process_text)
+    @if($solution->hasMeaningfulContent('process_text'))
     <div style="border-left: 3px solid var(--gold-primary); padding-left: 20px; margin: 28px 0;">
       <div style="font-size: 16px; color: #FFFFFF; line-height: 1.75; font-style: italic; margin: 0;">{!! $solution->process_text !!}</div>
     </div>
     @endif
 
-    @if($solution->highlight_banner)
+    @if($solution->hasMeaningfulContent('highlight_banner'))
     <div style="border-left: 3px solid var(--gold-primary); padding-left: 20px; margin: 28px 0;">
       <h3 style="font-size: 20px; color: var(--gold-primary); font-weight: 700; margin: 0; line-height: 1.4;">
         <i class="fas fa-check-circle"></i> {{ $solution->highlight_banner }}
@@ -79,7 +83,9 @@
         </div>
         <div class="simple-card-body">
           <h3 class="simple-card-title">{{ $item->title }}</h3>
+          @if(filled(trim(strip_tags((string)$item->desc, '<img>'))))
           <p class="simple-card-desc">{{ $item->desc }}</p>
+          @endif
         </div>
       </article>
       @endforeach
