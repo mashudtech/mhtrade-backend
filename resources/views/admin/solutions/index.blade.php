@@ -26,6 +26,7 @@
             <th style="width:40px;">#</th>
             <th>Title</th>
             <th>Slug</th>
+            <th>Inquiry Code</th>
             <th>Items</th>
             <th>Badge / Tags</th>
             <th>Status</th>
@@ -38,6 +39,10 @@
             <td class="text-muted">{{ $solution->sort_order }}</td>
             <td><strong>{{ $solution->title }}</strong></td>
             <td><code>{{ $solution->slug }}</code></td>
+            <td>
+              <code class="text-primary fw-bold">{{ $solution->resolved_prefix }}</code>
+              <div class="small text-muted">Starts from #{{ $solution->inquiry_start_number ?? 1000 }}</div>
+            </td>
             <td>
               <span class="badge text-bg-light border">{{ $solution->items_count ?? $solution->items->count() }} items</span>
             </td>

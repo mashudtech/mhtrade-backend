@@ -32,10 +32,12 @@
         <div class="form-group">
           <label class="form-label" for="req-vertical">Requirement Category <span class="req-star">*</span></label>
           <select class="form-control" name="vertical" id="req-vertical" required>
-            <option value="lc">Trade Finance &amp; Banking Instruments</option>
-            <option value="uae-banking">UAE Business Setup &amp; Corporate Banking</option>
-            <option value="project">Project Finance</option>
-            <option value="commodity">Commodity Trade Solutions</option>
+            @php
+              $modalSolutions = \App\Models\Solution::published()->get();
+            @endphp
+            @foreach($modalSolutions as $mSol)
+              <option value="{{ $mSol->slug }}">{{ $mSol->title }}</option>
+            @endforeach
             <option value="general">General Business Inquiry</option>
           </select>
         </div>

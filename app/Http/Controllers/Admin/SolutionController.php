@@ -35,6 +35,8 @@ class SolutionController extends Controller
             'overview' => 'required|string',
             'process_text' => 'nullable|string',
             'highlight_banner' => 'nullable|string|max:500',
+            'inquiry_prefix' => 'nullable|string|max:20',
+            'inquiry_start_number' => 'nullable|integer|min:1',
             'image_file' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
             'items_form_submitted' => 'nullable',
             'items' => 'sometimes|array|max:65535',
@@ -67,6 +69,8 @@ class SolutionController extends Controller
         $solutionData = [
             'slug' => $slug,
             'num' => $num,
+            'inquiry_prefix' => ! empty($validated['inquiry_prefix']) ? strtoupper(trim($validated['inquiry_prefix'])) : null,
+            'inquiry_start_number' => ! empty($validated['inquiry_start_number']) ? (int) $validated['inquiry_start_number'] : 1000,
             'title' => $validated['title'],
             'hero_headline' => $formattedHeadline ?: $validated['title'],
             'badge' => $validated['badge'] ?? $validated['title'],
@@ -141,6 +145,8 @@ class SolutionController extends Controller
             'overview' => 'required|string',
             'process_text' => 'nullable|string',
             'highlight_banner' => 'nullable|string|max:500',
+            'inquiry_prefix' => 'nullable|string|max:20',
+            'inquiry_start_number' => 'nullable|integer|min:1',
             'image_file' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,svg|max:10240',
             'items_form_submitted' => 'required|accepted',
             'items' => 'sometimes|array|max:65535',
@@ -176,6 +182,8 @@ class SolutionController extends Controller
             'overview' => $this->cleanHtml($validated['overview'] ?? null) ?? '',
             'process_text' => $this->cleanHtml($validated['process_text'] ?? null),
             'highlight_banner' => $this->cleanHtml($validated['highlight_banner'] ?? null),
+            'inquiry_prefix' => ! empty($validated['inquiry_prefix']) ? strtoupper(trim($validated['inquiry_prefix'])) : null,
+            'inquiry_start_number' => ! empty($validated['inquiry_start_number']) ? (int) $validated['inquiry_start_number'] : 1000,
         ];
 
         if ($request->hasFile('image_file')) {

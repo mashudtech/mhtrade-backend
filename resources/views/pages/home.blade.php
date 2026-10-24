@@ -161,10 +161,9 @@
               <div class="ingestion-select-group">
                 <label class="ingestion-label" for="hero-vertical-select">Select Trade Requirement</label>
                 <select class="ingestion-select" id="hero-vertical-select">
-                  <option value="lc">Trade Finance &amp; Banking Instruments</option>
-                  <option value="uae-banking">UAE Business Setup &amp; Corporate Banking</option>
-                  <option value="project">Project Finance</option>
-                  <option value="commodity">Commodity Trade Solutions</option>
+                  @foreach($solutions as $sol)
+                    <option value="{{ $sol->slug }}">{{ $sol->title }}</option>
+                  @endforeach
                   <option value="general">General Business Inquiry</option>
                 </select>
               </div>

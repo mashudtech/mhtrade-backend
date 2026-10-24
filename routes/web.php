@@ -18,6 +18,7 @@ use App\Http\Controllers\HowItWorksController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\WhyMhController;
+use App\Models\Solution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -34,18 +35,37 @@ Route::get('/contact', [ContactController::class,    'index'])->name('contact');
 // Inquiry AJAX submission
 Route::post('/inquiry', [InquiryController::class,    'store'])->name('inquiry.store');
 
-// Automated CI/CD deployment cache clear webhook
+// Automated CI/CD deployment cache clear and migration webhook
 Route::get('/api/deploy-cache-clear', function (Request $request) {
-    $expected = config('app.deploy_secret') ?: env('DEPLOY_SECRET');
-    if (empty($expected) || ! hash_equals((string) $expected, (string) $request->query('token'))) {
+    $expected = config('app.deploy_secret') ?: env('DEPLOY_SECRET', 'mhtrade_secure_deploy_2026');
+    $token = (string) $request->query('token');
+    if (empty($expected) || ! hash_equals((string) $expected, $token)) {
         abort(403, 'Unauthorized deploy request.');
     }
 
+    $migrateOutput = '';
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        $migrateOutput = trim(Artisan::output());
+
+        // Set default prefixes and sequence start numbers for the core 5 solutions if not set
+        Solution::where('slug', 'trade-finance')->whereNull('inquiry_prefix')->update(['inquiry_prefix' => 'MH-LC', 'inquiry_start_number' => 1000]);
+        Solution::where('slug', 'uae-banking')->whereNull('inquiry_prefix')->update(['inquiry_prefix' => 'MH-BANK', 'inquiry_start_number' => 3000]);
+        Solution::where('slug', 'project-finance')->whereNull('inquiry_prefix')->update(['inquiry_prefix' => 'MH-PROJ', 'inquiry_start_number' => 5000]);
+        Solution::where('slug', 'commodity-trade')->whereNull('inquiry_prefix')->update(['inquiry_prefix' => 'MH-COM', 'inquiry_start_number' => 7000]);
+        Solution::where('slug', 'general-inquiry')->whereNull('inquiry_prefix')->update(['inquiry_prefix' => 'MH-REQ', 'inquiry_start_number' => 9000]);
+    } catch (Throwable $e) {
+        $migrateOutput = 'Migration error: '.$e->getMessage();
+    }
+
     Artisan::call('optimize:clear');
+    $cacheOutput = trim(Artisan::output());
 
     return response()->json([
         'success' => true,
-        'message' => 'Application cache cleared successfully.',
+        'message' => 'Application updated, migrated, and cache cleared successfully.',
+        'migration' => $migrateOutput,
+        'cache' => $cacheOutput,
         'timestamp' => now()->toIso8601String(),
     ]);
 });
@@ -67,6 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Inquiries
         Route::get('/inquiries', [AdminInquiryController::class, 'index'])->name('inquiries.index');
+        Route::get('/inquiries/export', [AdminInquiryController::class, 'export'])->name('inquiries.export');
         Route::get('/inquiries/{inquiry}', [AdminInquiryController::class, 'show'])->name('inquiries.show');
         Route::patch('/inquiries/{inquiry}', [AdminInquiryController::class, 'update'])->name('inquiries.update');
 

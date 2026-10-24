@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\NewInquiryMail;
 use App\Models\CmsSetting;
 use App\Models\Inquiry;
+use App\Models\Solution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
@@ -13,8 +14,11 @@ class InquiryController extends Controller
 {
     public function store(Request $request)
     {
+        $publishedSlugs = Solution::published()->pluck('slug')->all();
+        $allowedVerticals = array_unique(array_merge($publishedSlugs, ['general', 'lc', 'uae-banking', 'project', 'commodity']));
+
         $validated = $request->validate([
-            'vertical' => 'required|in:lc,uae-banking,project,commodity,general',
+            'vertical' => ['required', 'string', 'in:'.implode(',', $allowedVerticals)],
             'name' => 'required|string|max:255',
             'company' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',

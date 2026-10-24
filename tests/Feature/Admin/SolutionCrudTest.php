@@ -37,6 +37,8 @@ class SolutionCrudTest extends TestCase
         $response = $this->post(route('admin.solutions.store'), [
             'title' => 'Warehouse Logistics & Financing',
             'badge' => 'Warehouse, Inventory, Collateral',
+            'inquiry_prefix' => 'MH-WARE',
+            'inquiry_start_number' => 8000,
             'short_desc' => 'Financing solutions backed by warehouse collateral and verified logistics.',
             'overview' => 'Detailed framework for warehouse goods inspection and financing.',
             'items' => [
@@ -57,6 +59,8 @@ class SolutionCrudTest extends TestCase
             'title' => 'Warehouse Logistics & Financing',
             'slug' => 'warehouse-logistics-financing',
             'badge' => 'Warehouse, Inventory, Collateral',
+            'inquiry_prefix' => 'MH-WARE',
+            'inquiry_start_number' => 8000,
         ]);
 
         $solution = Solution::where('slug', 'warehouse-logistics-financing')->firstOrFail();

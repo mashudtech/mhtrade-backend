@@ -3,7 +3,30 @@
 @section('title', 'Inquiries')
 
 @section('content_header')
-  <h1 class="m-0">All Inquiries</h1>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1 class="m-0">All Inquiries</h1>
+    <div class="btn-group">
+      <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export Excel Report
+      </button>
+      <div class="dropdown-menu dropdown-menu-end shadow">
+        <h6 class="dropdown-header">Report Frequency</h6>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.inquiries.export', ['period' => 'daily']) }}">
+          <i class="bi bi-calendar-day me-2 text-primary"></i> Daily Report (Today)
+        </a>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.inquiries.export', ['period' => 'weekly']) }}">
+          <i class="bi bi-calendar-week me-2 text-info"></i> Weekly Report (This Week)
+        </a>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.inquiries.export', ['period' => 'monthly']) }}">
+          <i class="bi bi-calendar-month me-2 text-warning"></i> Monthly Report (This Month)
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.inquiries.export', array_merge(request()->query(), ['period' => 'all'])) }}">
+          <i class="bi bi-download me-2 text-success"></i> Export Current Filter / All
+        </a>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('content')
@@ -30,9 +53,16 @@
       <div class="col-md-3">
         <select name="vertical" class="form-select form-select-sm">
           <option value="">All Verticals</option>
-          @foreach(['lc' => 'Trade Finance', 'uae-banking' => 'UAE Banking', 'project' => 'Project Finance', 'commodity' => 'Commodity', 'general' => 'General'] as $val => $label)
-            <option value="{{ $val }}" {{ request('vertical') === $val ? 'selected' : '' }}>{{ $label }}</option>
-          @endforeach
+          @if(isset($solutions) && $solutions->isNotEmpty())
+            @foreach($solutions as $sol)
+              <option value="{{ $sol->slug }}" {{ request('vertical') === $sol->slug ? 'selected' : '' }}>{{ $sol->title }}</option>
+            @endforeach
+            <option value="general" {{ in_array(request('vertical'), ['general', 'general-inquiry']) ? 'selected' : '' }}>General Requirement</option>
+          @else
+            @foreach(['lc' => 'Trade Finance', 'uae-banking' => 'UAE Banking', 'project' => 'Project Finance', 'commodity' => 'Commodity', 'general' => 'General'] as $val => $label)
+              <option value="{{ $val }}" {{ request('vertical') === $val ? 'selected' : '' }}>{{ $label }}</option>
+            @endforeach
+          @endif
         </select>
       </div>
       <div class="col-md-2 d-flex gap-1">

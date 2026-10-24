@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Solution extends Model
 {
     protected $fillable = [
-        'slug', 'num', 'title', 'hero_headline', 'badge',
+        'slug', 'num', 'inquiry_prefix', 'inquiry_start_number', 'title', 'hero_headline', 'badge',
         'short_desc', 'overview', 'image', 'process_text',
         'highlight_banner', 'is_published', 'sort_order',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'inquiry_start_number' => 'integer',
     ];
 
     public function items(): HasMany
@@ -56,5 +57,17 @@ class Solution extends Model
         $plain = trim(str_replace("\xc2\xa0", ' ', $plain));
 
         return $plain !== '';
+    }
+
+    public function getResolvedPrefixAttribute(): string
+    {
+        if (! empty($this->inquiry_prefix)) {
+            return strtoupper(trim($this->inquiry_prefix));
+        }
+
+        $clean = preg_replace('/[^a-zA-Z]/', '', $this->title);
+        $short = substr(strtoupper($clean), 0, 4);
+
+        return 'MH-'.($short ?: 'REQ');
     }
 }

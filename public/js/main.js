@@ -508,15 +508,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalSuccessContainer = document.getElementById('modal-success-container');
   const assignedIdDisplay = document.getElementById('assigned-request-id');
 
+  function setModalVertical(targetVertical) {
+    if (!verticalSelect) return;
+    let found = false;
+    for (let i = 0; i < verticalSelect.options.length; i++) {
+      if (verticalSelect.options[i].value === targetVertical) {
+        verticalSelect.selectedIndex = i;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const aliasMap = {
+        'lc': 'trade-finance',
+        'trade-finance': 'trade-finance',
+        'uae-banking': 'uae-banking',
+        'project': 'project-finance',
+        'project-finance': 'project-finance',
+        'commodity': 'commodity-trade',
+        'commodity-trade': 'commodity-trade',
+      };
+      const mapped = aliasMap[targetVertical];
+      if (mapped) {
+        for (let i = 0; i < verticalSelect.options.length; i++) {
+          if (verticalSelect.options[i].value === mapped) {
+            verticalSelect.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!found && targetVertical) {
+      verticalSelect.value = targetVertical;
+    }
+  }
+
   // Open Modal Handler
   openModalBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const targetVertical = btn.getAttribute('data-vertical') || 'general';
-      if (verticalSelect) {
-        verticalSelect.value = targetVertical;
-      }
       resetFormState();
+      setModalVertical(targetVertical);
       modalOverlay?.classList.add('active');
     });
   });
@@ -540,10 +574,8 @@ document.addEventListener('DOMContentLoaded', () => {
   heroIngestionForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     const selectedVertical = document.getElementById('hero-vertical-select')?.value || 'general';
-    if (verticalSelect) {
-      verticalSelect.value = selectedVertical;
-    }
     resetFormState();
+    setModalVertical(selectedVertical);
     modalOverlay?.classList.add('active');
   });
 

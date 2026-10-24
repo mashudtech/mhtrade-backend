@@ -29,6 +29,25 @@
             @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
 
+          <div class="row g-2 mb-3 p-3 bg-light rounded border">
+            <div class="col-12 mb-1">
+              <strong class="text-dark"><i class="bi bi-hash me-1 text-primary"></i>Inquiry Reference Configuration</strong>
+              <div class="text-muted small">Configure how inquiry IDs are formatted and numbered for this specific solution.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Inquiry ID Prefix</label>
+              <input type="text" name="inquiry_prefix" class="form-control text-uppercase @error('inquiry_prefix') is-invalid @enderror" value="{{ old('inquiry_prefix') }}" placeholder="e.g. MH-LC or MH-BANK">
+              <small class="text-muted">Unique prefix (e.g. MH-LC). Leave blank to auto-generate from title.</small>
+              @error('inquiry_prefix')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Starting Sequence Number <span class="text-danger">*</span></label>
+              <input type="number" name="inquiry_start_number" class="form-control @error('inquiry_start_number') is-invalid @enderror" min="1" step="1" value="{{ old('inquiry_start_number', 1000) }}" required>
+              <small class="text-muted">Initial sequence number for inquiries (e.g. 1000, 3000, 5000). Starts from at least this number.</small>
+              @error('inquiry_start_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+          </div>
+
           <div class="row g-2 mb-3">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Page Hero Headline (Line 1)</label>
