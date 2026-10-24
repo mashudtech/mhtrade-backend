@@ -1,0 +1,65 @@
+name: CI/CD Deploy to cPanel Live
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      full_deploy:
+        description: 'Force full sync of all files (instead of just changed files)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  test:
+    name: Run PHPUnit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, mysql, pdo, curl, gd
+          coverage: none
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Run Test Suite
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test --compact
+
+  deploy:
+    name: Deploy to cPanel Server
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Deploy Modified Files to Server
+        env:
+          FTP_HOST: ${{ secrets.CPANEL_FTP_HOST || '190.92.174.37' }}
+          FTP_USER: ${{ secrets.CPANEL_FTP_USER || 'mhtradecap' }}
+          FTP_PASS: ${{ secrets.CPANEL_FTP_PASS }}
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
+          FULL_DEPLOY: ${{ (github.event.inputs.full_deploy == true || github.event.inputs.full_deploy == 'true') && '1' || '0' }}
+        run: |
+          python3 .github/scripts/deploy.py

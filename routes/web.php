@@ -18,6 +18,8 @@ use App\Http\Controllers\HowItWorksController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\WhyMhController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
@@ -31,6 +33,22 @@ Route::get('/contact', [ContactController::class,    'index'])->name('contact');
 
 // Inquiry AJAX submission
 Route::post('/inquiry', [InquiryController::class,    'store'])->name('inquiry.store');
+
+// Automated CI/CD deployment cache clear webhook
+Route::get('/api/deploy-cache-clear', function (Request $request) {
+    $expected = config('app.deploy_secret') ?: env('DEPLOY_SECRET');
+    if (empty($expected) || ! hash_equals((string) $expected, (string) $request->query('token'))) {
+        abort(403, 'Unauthorized deploy request.');
+    }
+
+    Artisan::call('optimize:clear');
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Application cache cleared successfully.',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
 
 // Login redirect alias for default Laravel auth middleware
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
