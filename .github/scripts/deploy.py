@@ -90,38 +90,40 @@ def map_to_remote(local_path):
 
 def ensure_remote_dir(ftp, remote_dir):
     """Recursively create remote directories if they don't exist."""
-    parts = [p for p in remote_dir.split('/') if p]
-    current = ''
+    orig = ftp.pwd()
+    parts = [p for p in remote_dir.replace('\\', '/').split('/') if p]
     for part in parts:
-        current = f'{current}/{part}' if current else part
         try:
-            ftp.cwd(current)
-            ftp.cwd('/')
+            ftp.cwd(part)
         except ftplib.error_perm:
             try:
-                ftp.mkd(current)
-                print(f'  [MKDIR] Created remote directory: {current}')
-            except Exception:
-                pass
+                ftp.mkd(part)
+                print(f'  [MKDIR] Created remote directory: {part}')
+            except Exception as e:
+                print(f'  [WARN] Failed to create directory {part}: {e}')
+            try:
+                ftp.cwd(part)
+            except Exception as e:
+                print(f'  [FAIL] Failed to cwd into {part}: {e}')
+    ftp.cwd(orig)
 
 
 def upload_file(ftp, local_path, remote_path):
     """Upload a single file over FTP."""
     remote_dir = os.path.dirname(remote_path)
+    filename = os.path.basename(remote_path)
     if remote_dir:
         ensure_remote_dir(ftp, remote_dir)
 
-    is_binary = any(local_path.lower().endswith(ext) for ext in [
-        '.png', '.jpg', '.jpeg', '.webp', '.ico', '.pdf', '.woff', '.woff2', '.ttf', '.eot', '.zip'
-    ])
-    
-    with open(local_path, 'rb' if is_binary else 'r', encoding=None if is_binary else 'utf-8', errors='ignore') as f:
-        if is_binary:
-            ftp.storbinary(f'STOR {remote_path}', f)
-        else:
-            ftp.storlines(f'STOR {remote_path}', open(local_path, 'rb'))
-            
-    print(f'  [OK] {local_path} -> {remote_path}')
+    orig = ftp.pwd()
+    try:
+        if remote_dir:
+            ftp.cwd(remote_dir)
+        with open(local_path, 'rb') as f:
+            ftp.storbinary(f'STOR {filename}', f)
+        print(f'  [OK] {local_path} -> {remote_path}')
+    finally:
+        ftp.cwd(orig)
 
 
 def main():

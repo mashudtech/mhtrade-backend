@@ -3,14 +3,14 @@
 @section('title', 'Our Core Capabilities & Solutions | MH Trade Capital Solutions Dubai')
 @section('meta_desc', 'Explore core business capabilities of MH Trade Capital Solutions — Trade Finance, UAE Corporate Banking, Project Finance, Commodity Sourcing, and General Business Procurement.')
 @section('page_hero')
-<section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ asset('images/hero/dubai_hero_bg.webp') }}');">
+<section class="page-hero-section" style="background-image: linear-gradient(180deg, rgba(7, 15, 30, 0.40) 0%, rgba(10, 25, 47, 0.40) 100%), url('{{ asset('images/hero/Port_city_and_harbor_view_2K_20261024221800.jpg') }}');">
   <div class="container">
     <div class="hero-tag" style="margin: 0 0 16px; display: inline-flex;">
       <i class="fas fa-layer-group"></i> Institutional Financial Capabilities
     </div>
-    <h1 class="page-hero-title">Core Business Verticals &amp;<br><span style="color: var(--gold-primary);">Capital Solutions</span></h1>
+    <h1 class="page-hero-title">Core Business Verticals<br><span style="color: var(--gold-primary);">&amp; Capital Solutions</span></h1>
     <p class="page-hero-desc">
-      Specialized business divisions tailored for global buyers, sellers, corporations, and institutional projects from Dubai, United Arab Emirates.
+      Specialized business divisions delivering integrated solutions for global buyers, sellers, corporations, and institutional projects, strategically based in Dubai, UAE.
     </p>
     <div style="display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap;">
       <button class="btn-gold open-inquiry-modal" data-vertical="general">
